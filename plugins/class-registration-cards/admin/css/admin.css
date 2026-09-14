@@ -1,0 +1,37 @@
+/* Admin CSS for Class Registration Cards */
+
+/* Meta Boxes Styling */
+.crc-image-wrapper {
+	text-align: center;
+	padding: 15px;
+	border: 1px dashed #ccc;
+	background: #fafafa;
+}
+.crc-image-wrapper img {
+	max-height: 250px;
+	border: 1px solid #ddd;
+}
+.crc-badge-row, .crc-feature-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.crc-badge-row input[type="text"], .crc-feature-row input[type="text"] {
+	flex: 1;
+}
+
+/* Drag and Drop Admin Table */
+table.wp-list-table .crc-drag-handle {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+.ui-sortable-helper {
+	background-color: #fff;
+	box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+.ui-sortable-placeholder {
+	background-color: #f1f1f1;
+	border: 1px dashed #ccc;
+	visibility: visible !important;
+}

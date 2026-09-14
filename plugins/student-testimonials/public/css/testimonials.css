@@ -1,0 +1,204 @@
+/* Student Testimonials CSS */
+
+.st-testimonials-wrapper {
+	margin: 2rem 0;
+	font-family: inherit;
+}
+
+.st-grid {
+	display: grid;
+	gap: var(--st-card-gap, 20px);
+	margin-bottom: 2rem;
+}
+
+/* Default to Mobile layout */
+.st-grid {
+	grid-template-columns: repeat(1, 1fr);
+}
+
+.st-grid-mobile-1 { grid-template-columns: repeat(1, 1fr); }
+.st-grid-mobile-2 { grid-template-columns: repeat(2, 1fr); }
+
+/* Tablet */
+@media (min-width: 768px) {
+	.st-grid-tablet-1 { grid-template-columns: repeat(1, 1fr); }
+	.st-grid-tablet-2 { grid-template-columns: repeat(2, 1fr); }
+	.st-grid-tablet-3 { grid-template-columns: repeat(3, 1fr); }
+	.st-grid-tablet-4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+	.st-grid-desktop-1 { grid-template-columns: repeat(1, 1fr); }
+	.st-grid-desktop-2 { grid-template-columns: repeat(2, 1fr); }
+	.st-grid-desktop-3 { grid-template-columns: repeat(3, 1fr); }
+	.st-grid-desktop-4 { grid-template-columns: repeat(4, 1fr); }
+	.st-grid-desktop-5 { grid-template-columns: repeat(5, 1fr); }
+	.st-grid-desktop-6 { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* Card */
+.st-card {
+	background: var(--st-card-bg, #FFF);
+	border-radius: var(--st-card-radius, 12px);
+	box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.st-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Image */
+.st-card-image {
+	width: 100%;
+	height: var(--st-image-height, 250px);
+	background: #f5f5f5;
+	overflow: hidden;
+}
+
+.st-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.st-img-placeholder {
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, #e2e2e2 0%, #f9f9f9 100%);
+}
+
+/* Content */
+.st-card-content {
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+/* Stars */
+.st-stars {
+	color: var(--st-star-color, #FFC400);
+	font-size: 1.2rem;
+	margin-bottom: 8px;
+	letter-spacing: 2px;
+}
+
+/* Title */
+.st-title {
+	color: var(--st-title-color, #071B91);
+	font-size: 1.25rem;
+	font-weight: 700;
+	margin: 0 0 8px 0;
+	line-height: 1.3;
+}
+
+/* Date */
+.st-date {
+	color: var(--st-date-color, #666);
+	font-size: 0.9rem;
+	margin-bottom: 12px;
+}
+
+/* Class Passed */
+.st-class-passed {
+	font-size: 0.9rem;
+	margin-bottom: 12px;
+	color: #444;
+	background: #f9f9f9;
+	padding: 6px 10px;
+	border-radius: 4px;
+	display: inline-block;
+	align-self: flex-start;
+}
+
+/* Excerpt */
+.st-excerpt {
+	color: #555;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	margin-top: auto;
+}
+
+.st-excerpt p {
+	margin: 0 0 10px 0;
+}
+.st-excerpt p:last-child {
+	margin-bottom: 0;
+}
+
+/* Button */
+.st-button-wrapper {
+	margin-top: 2rem;
+}
+.st-align-left { text-align: left; }
+.st-align-center { text-align: center; }
+.st-align-right { text-align: right; }
+
+.st-btn {
+	display: inline-block;
+	background: var(--st-btn-bg, #071B91);
+	color: var(--st-btn-color, #FFF) !important;
+	padding: 12px 24px;
+	border-radius: 6px;
+	text-decoration: none !important;
+	font-weight: 600;
+	transition: opacity 0.3s ease;
+}
+
+.st-btn:hover {
+	opacity: 0.85;
+}
+
+/* Lightbox Modal */
+.st-lightbox {
+	display: none;
+	position: fixed;
+	z-index: 99999;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0,0,0,0.85);
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+.st-lightbox.st-show {
+	display: flex;
+	opacity: 1;
+}
+.st-lightbox-img {
+	max-width: 90%;
+	max-height: 90vh;
+	box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+	border-radius: 4px;
+	transform: scale(0.95);
+	transition: transform 0.3s ease;
+	object-fit: contain;
+}
+.st-lightbox.st-show .st-lightbox-img {
+	transform: scale(1);
+}
+.st-lightbox-close {
+	position: absolute;
+	top: 20px;
+	right: 30px;
+	color: #fff;
+	font-size: 40px;
+	font-weight: bold;
+	cursor: pointer;
+	line-height: 1;
+	user-select: none;
+}
+.st-lightbox-close:hover {
+	color: #ccc;
+}

@@ -1,0 +1,14 @@
+# WordPress Studio Specific
+database/
+db.php
+mu-plugins/sqlite-database-integration/
+
+# Logs and Caches
+debug.log
+cache/
+upgrade/
+*.zip
+*.tar.gz
+
+# macOS
+.DS_Store
