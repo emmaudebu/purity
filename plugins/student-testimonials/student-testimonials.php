@@ -38,6 +38,7 @@ class ST_Testimonials {
 		require_once ST_TESTIMONIALS_PATH . 'includes/class-shortcode.php';
 		require_once ST_TESTIMONIALS_PATH . 'includes/class-assets.php';
 		require_once ST_TESTIMONIALS_PATH . 'includes/class-bulk-upload.php';
+		require_once ST_TESTIMONIALS_PATH . 'includes/class-student-survey.php';
 	}
 
 	private function init() {
@@ -48,6 +49,7 @@ class ST_Testimonials {
 		new ST_Testimonials_Shortcode();
 		new ST_Testimonials_Assets();
 		new ST_Testimonials_Bulk_Upload();
+		new ST_Student_Survey();
 	}
 }
 

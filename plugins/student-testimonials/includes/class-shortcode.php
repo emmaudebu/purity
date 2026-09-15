@@ -14,6 +14,7 @@ class ST_Testimonials_Shortcode {
 		// Merge defaults from settings, then override with shortcode attributes
 		$defaults = [
 			'columns'        => isset( $options['columns'] ) ? $options['columns'] : '4',
+			'rows'           => '', // Added rows attribute
 			'tablet_columns' => isset( $options['tablet_columns'] ) ? $options['tablet_columns'] : '2',
 			'mobile_columns' => isset( $options['mobile_columns'] ) ? $options['mobile_columns'] : '1',
 			'limit'          => isset( $options['limit'] ) ? $options['limit'] : '8',
@@ -28,6 +29,11 @@ class ST_Testimonials_Shortcode {
 		];
 
 		$atts = shortcode_atts( $defaults, $atts, 'student_testimonials' );
+
+		// If rows is defined, calculate limit dynamically (rows * columns)
+		if ( ! empty( $atts['rows'] ) && intval( $atts['rows'] ) > 0 ) {
+			$atts['limit'] = intval( $atts['columns'] ) * intval( $atts['rows'] );
+		}
 
 		$args = [
 			'post_type'      => 'student_testimonial',

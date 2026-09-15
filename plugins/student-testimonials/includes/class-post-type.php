@@ -8,6 +8,22 @@ class ST_Testimonials_Post_Type {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_filter( 'manage_student_testimonial_posts_columns', [ $this, 'add_custom_columns' ] );
 		add_action( 'manage_student_testimonial_posts_custom_column', [ $this, 'render_custom_columns' ], 10, 2 );
+		add_action( 'admin_notices', [ $this, 'display_shortcode_notice' ] );
+	}
+
+	public function display_shortcode_notice() {
+		$screen = get_current_screen();
+		if ( $screen && $screen->id === 'edit-student_testimonial' ) {
+			?>
+			<div class="notice notice-info">
+				<p><strong>Student Testimonials Shortcodes:</strong></p>
+				<ul style="list-style: disc; margin-left: 20px;">
+					<li>To display testimonials with default settings, use: <code>[student_testimonials]</code></li>
+					<li>To customize the grid layout, you can use attributes like columns, rows, and show_button. For example: <code>[student_testimonials columns="4" rows="2" show_button="no"]</code></li>
+				</ul>
+			</div>
+			<?php
+		}
 	}
 
 	public function register_post_type() {

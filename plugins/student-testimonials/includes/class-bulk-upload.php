@@ -119,7 +119,7 @@ class ST_Testimonials_Bulk_Upload {
 					$post_data = [
 						'post_title'  => 'Testimonial - ' . current_time( 'Y-m-d H:i' ),
 						'post_type'   => 'student_testimonial',
-						'post_status' => 'publish',
+						'post_status' => 'pending',
 					];
 
 					$post_id = wp_insert_post( $post_data );
