@@ -49,7 +49,8 @@ function custom_site_reviews_admin_notice() {
             <p><strong>Site Reviews Shortcodes:</strong></p>
             <ul style="list-style: disc; margin-left: 20px;">
                 <li>To display the review submission form, use: <code>[submit_review_form]</code></li>
-                <li>To display the published reviews in a carousel, use: <code>[display_site_reviews]</code></li>
+                <li>To display the published reviews in a sliding carousel (default), use: <code>[display_site_reviews]</code></li>
+                <li>To display the reviews in a grid (disabling the carousel) with specific columns and rows, use: <code>[display_site_reviews carousel="no" columns="3" rows="2"]</code></li>
             </ul>
         </div>
         <?php
@@ -204,28 +205,55 @@ add_shortcode('submit_review_form', 'custom_site_reviews_form_shortcode');
 
 // 5. Shortcode: The Carousel Display [display_site_reviews]
 function custom_site_reviews_display_shortcode($atts) {
+    $original_limit = ( is_array( $atts ) && isset( $atts['limit'] ) ) ? $atts['limit'] : null;
+
     $atts = shortcode_atts(array(
-        'auto_slide' => 'true',
+        'carousel'       => 'yes',
+        'columns'        => '3',
+        'rows'           => '',
+        'limit'          => '12',
+        'auto_slide'     => 'true',
         'slide_interval' => '3000',
     ), $atts, 'display_site_reviews');
+
+    // If rows is defined and limit was not explicitly provided, calculate limit dynamically
+    if (!empty($atts['rows']) && intval($atts['rows']) > 0 && $original_limit === null) {
+        $atts['limit'] = intval($atts['columns']) * intval($atts['rows']);
+    }
 
     $args = array(
         'post_type'      => 'site_review',
         'post_status'    => 'publish',
-        'posts_per_page' => 12,
+        'posts_per_page' => intval($atts['limit']),
         'orderby'        => 'date',
         'order'          => 'DESC'
     );
     $query = new WP_Query($args);
     if (!$query->have_posts()) return '<p>No reviews yet.</p>';
     $carousel_id = 'csr-' . wp_rand(100, 999);
+    $is_carousel = $atts['carousel'] === 'yes';
+    $cols = intval($atts['columns']);
+    
     ob_start();
     ?>
     <style>
         .csr-container { position: relative; max-width: 100%; overflow: hidden; padding: 20px 40px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .csr-carousel { display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 20px; scrollbar-width: none; }
         .csr-carousel::-webkit-scrollbar { display: none; } 
-        .csr-card { background-color: #f8f9fa; border-radius: 12px; padding: 24px; min-width: 320px; max-width: 320px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #eaeaea; flex-shrink: 0; display: flex; flex-direction: column; }
+        
+        /* Grid Styles */
+        .csr-grid { display: grid; gap: 20px; padding-bottom: 20px; }
+        .csr-grid-1 { grid-template-columns: repeat(1, 1fr); }
+        .csr-grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .csr-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .csr-grid-4 { grid-template-columns: repeat(4, 1fr); }
+        @media (max-width: 992px) { .csr-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 768px) { .csr-grid { grid-template-columns: repeat(1, 1fr) !important; } }
+        
+        .csr-card { background-color: #f8f9fa; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #eaeaea; display: flex; flex-direction: column; }
+        .csr-carousel .csr-card { min-width: 320px; max-width: 320px; flex-shrink: 0; }
+        .csr-grid .csr-card { min-width: 100%; }
+        
         .csr-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .csr-user-info { display: flex; align-items: center; gap: 12px; }
         .csr-avatar { width: 42px; height: 42px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
@@ -236,6 +264,8 @@ function custom_site_reviews_display_shortcode($atts) {
         .csr-verified { fill: #1a73e8; width: 16px; height: 16px; display: flex; align-items: center; }
         .csr-text { color: #3c4043; font-size: 14px; line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
         .csr-read-more { color: #70757a; font-size: 13px; margin-top: 10px; cursor: pointer; text-decoration: none; display: inline-block; }
+        
+        /* Navigation Arrows */
         .csr-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; background: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); color: #071B91; z-index: 10; transition: all 0.3s ease; padding: 0; }
         .csr-nav:hover { background: #071B91; color: white; transform: translateY(-50%) scale(1.1); box-shadow: 0 6px 20px rgba(7,27,145,0.3); }
         .csr-nav svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -243,12 +273,14 @@ function custom_site_reviews_display_shortcode($atts) {
         .csr-next { right: 15px; }
     </style>
 
-    <div class="csr-container" id="container-<?php echo $carousel_id; ?>">
-        <button class="csr-nav csr-prev" onclick="document.getElementById('scroll-<?php echo $carousel_id; ?>').scrollBy({left: -340, behavior: 'smooth'})" aria-label="Previous">
+    <div class="csr-container" id="container-<?php echo esc_attr($carousel_id); ?>" <?php if (!$is_carousel) echo 'style="padding-left: 0; padding-right: 0;"'; ?>>
+        <?php if ($is_carousel) : ?>
+        <button class="csr-nav csr-prev" onclick="document.getElementById('scroll-<?php echo esc_attr($carousel_id); ?>').scrollBy({left: -340, behavior: 'smooth'})" aria-label="Previous">
             <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
+        <?php endif; ?>
         
-        <div class="csr-carousel" id="scroll-<?php echo $carousel_id; ?>">
+        <div class="<?php echo $is_carousel ? 'csr-carousel' : 'csr-grid csr-grid-' . esc_attr($cols); ?>" id="scroll-<?php echo esc_attr($carousel_id); ?>">
             <?php while ($query->have_posts()) : $query->the_post(); 
                 $rating = get_post_meta(get_the_ID(), '_review_rating', true) ?: 5;
                 $stars = str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
@@ -260,7 +292,7 @@ function custom_site_reviews_display_shortcode($atts) {
             <div class="csr-card">
                 <div class="csr-header">
                     <div class="csr-user-info">
-                        <div class="csr-avatar" style="background-color: <?php echo $bg_color; ?>;"><?php echo $initial; ?></div>
+                        <div class="csr-avatar" style="background-color: <?php echo esc_attr($bg_color); ?>;"><?php echo esc_html($initial); ?></div>
                         <h4 class="csr-name"><?php echo esc_html($name); ?></h4>
                     </div>
                     <svg class="csr-g-icon" viewBox="0 0 24 24">
@@ -271,7 +303,7 @@ function custom_site_reviews_display_shortcode($atts) {
                     </svg>
                 </div>
                 <div class="csr-rating-row">
-                    <div class="csr-stars"><?php echo $stars; ?></div>
+                    <div class="csr-stars"><?php echo esc_html($stars); ?></div>
                     <svg class="csr-verified" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </div>
                 <div class="csr-text"><?php echo wp_kses_post(get_the_content()); ?></div>
@@ -279,12 +311,15 @@ function custom_site_reviews_display_shortcode($atts) {
             </div>
             <?php endwhile; wp_reset_postdata(); ?>
         </div>
-        <button class="csr-nav csr-next" onclick="document.getElementById('scroll-<?php echo $carousel_id; ?>').scrollBy({left: 340, behavior: 'smooth'})" aria-label="Next">
+        
+        <?php if ($is_carousel) : ?>
+        <button class="csr-nav csr-next" onclick="document.getElementById('scroll-<?php echo esc_attr($carousel_id); ?>').scrollBy({left: 340, behavior: 'smooth'})" aria-label="Next">
             <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
+        <?php endif; ?>
     </div>
     
-    <?php if ($atts['auto_slide'] === 'true') : ?>
+    <?php if ($is_carousel && $atts['auto_slide'] === 'true') : ?>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var carousel = document.getElementById('scroll-<?php echo $carousel_id; ?>');

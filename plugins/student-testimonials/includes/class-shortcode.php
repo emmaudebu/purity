@@ -9,6 +9,8 @@ class ST_Testimonials_Shortcode {
 	}
 
 	public function render_shortcode( $atts ) {
+		$original_limit = ( is_array( $atts ) && isset( $atts['limit'] ) ) ? $atts['limit'] : null;
+
 		$options = get_option( 'st_testimonials_settings' );
 
 		// Merge defaults from settings, then override with shortcode attributes
@@ -30,8 +32,8 @@ class ST_Testimonials_Shortcode {
 
 		$atts = shortcode_atts( $defaults, $atts, 'student_testimonials' );
 
-		// If rows is defined, calculate limit dynamically (rows * columns)
-		if ( ! empty( $atts['rows'] ) && intval( $atts['rows'] ) > 0 ) {
+		// If rows is defined and limit was not explicitly provided, calculate limit dynamically
+		if ( ! empty( $atts['rows'] ) && intval( $atts['rows'] ) > 0 && $original_limit === null ) {
 			$atts['limit'] = intval( $atts['columns'] ) * intval( $atts['rows'] );
 		}
 
