@@ -1,0 +1,283 @@
+/* Smart WhatsApp Enquiries Frontend CSS */
+.swe-wrapper {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	z-index: 99999;
+	position: fixed; /* Although container is fixed, wrapper acts as namespace */
+}
+
+.swe-widget-container {
+	position: fixed;
+	bottom: 24px;
+	z-index: 999999;
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+}
+
+/* Floating Button */
+.swe-btn-floating {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: var(--swe-primary);
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+	position: relative;
+	z-index: 2;
+	padding: 14px;
+}
+.swe-btn-floating::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: inherit;
+	border-radius: 50%;
+	z-index: -1;
+	animation: swe-pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.swe-btn-floating:hover {
+	transform: scale(1.1);
+	box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+@keyframes swe-pulse {
+	0% {
+		transform: scale(1);
+		opacity: 0.6;
+	}
+	100% {
+		transform: scale(1.6);
+		opacity: 0;
+	}
+}
+
+/* Toast */
+.swe-toast {
+	background: var(--swe-bg);
+	color: var(--swe-text);
+	padding: 16px;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+	position: absolute;
+	bottom: 10px;
+	width: max-content;
+	max-width: 280px;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: all 0.4s ease;
+	z-index: 1;
+}
+.swe-toast.active {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+.swe-toast-close {
+	position: absolute;
+	top: 8px;
+	right: 12px;
+	font-size: 18px;
+	cursor: pointer;
+	color: #888;
+	line-height: 1;
+}
+.swe-toast-close:hover { color: #333; }
+.swe-toast-title {
+	font-weight: 700;
+	font-size: 15px;
+	margin-bottom: 4px;
+	padding-right: 16px;
+}
+.swe-toast-desc {
+	font-size: 13px;
+	color: #555;
+	line-height: 1.4;
+}
+
+/* Modal */
+.swe-modal {
+	position: fixed;
+	bottom: 100px;
+	width: calc(100% - 48px);
+	max-width: 380px;
+	background: var(--swe-bg);
+	border-radius: 16px;
+	box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+	opacity: 0;
+	visibility: hidden;
+	transform: scale(0.95);
+	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	z-index: 999999;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+.swe-modal.active {
+	opacity: 1;
+	visibility: visible;
+	transform: scale(1);
+}
+
+.swe-view {
+	display: none;
+	flex-direction: column;
+}
+.swe-view.active {
+	display: flex;
+}
+
+.swe-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px 10px;
+}
+.swe-modal-title {
+	font-weight: 800;
+	font-size: 18px;
+	color: var(--swe-text);
+	flex-grow: 1;
+}
+.swe-modal-subtitle {
+	padding: 0 24px 16px;
+	font-size: 14px;
+	color: #666;
+	line-height: 1.4;
+}
+.swe-modal-close {
+	background: #f0f0f1;
+	border: none;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: #555;
+	font-size: 18px;
+	transition: background 0.2s;
+}
+.swe-modal-close:hover { background: #e2e8f0; color: #111; }
+.swe-modal-back {
+	background: none;
+	border: none;
+	color: var(--swe-primary);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	padding: 0;
+	margin-right: 12px;
+}
+.swe-modal-back:hover { text-decoration: underline; }
+
+/* Subjects List */
+.swe-subjects-list {
+	max-height: 400px;
+	overflow-y: auto;
+	padding: 0 24px 24px;
+}
+.swe-subjects-list::-webkit-scrollbar { width: 6px; }
+.swe-subjects-list::-webkit-scrollbar-track { background: #f1f1f1; }
+.swe-subjects-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+.swe-subject-card {
+	display: flex;
+	align-items: center;
+	padding: 16px;
+	background: #f8fafc;
+	border-radius: 12px;
+	margin-bottom: 12px;
+	cursor: pointer;
+	border: 1px solid #f1f5f9;
+	transition: all 0.2s ease;
+}
+.swe-subject-card:last-child { margin-bottom: 0; }
+.swe-subject-card:hover {
+	background: #fff;
+	border-color: var(--swe-primary);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+	transform: translateY(-2px);
+}
+.swe-subject-icon {
+	font-size: 24px;
+	margin-right: 16px;
+	line-height: 1;
+}
+.swe-subject-content { flex-grow: 1; }
+.swe-subject-title { font-weight: 600; font-size: 15px; color: var(--swe-text); margin-bottom: 4px; }
+.swe-subject-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
+.swe-subject-arrow { font-size: 20px; color: #cbd5e1; margin-left: 12px; transition: transform 0.2s; }
+.swe-subject-card:hover .swe-subject-arrow { color: var(--swe-primary); transform: translateX(4px); }
+
+/* Message Preview */
+.swe-message-preview-container {
+	padding: 0 24px 24px;
+}
+#swe-message-textarea {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 16px;
+	font-family: inherit;
+	font-size: 14px;
+	color: var(--swe-text);
+	background: #f8fafc;
+	resize: none;
+	transition: border-color 0.2s;
+	line-height: 1.5;
+}
+#swe-message-textarea:focus {
+	outline: none;
+	border-color: var(--swe-primary);
+	background: #fff;
+}
+#swe-message-static {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 16px;
+	font-size: 14px;
+	color: var(--swe-text);
+	line-height: 1.5;
+}
+
+.swe-btn-primary {
+	margin: 0 24px 24px;
+	background: var(--swe-primary);
+	color: white;
+	border: none;
+	border-radius: 12px;
+	padding: 16px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	transition: background 0.2s, transform 0.1s;
+}
+.swe-btn-primary:hover { filter: brightness(0.95); }
+.swe-btn-primary:active { transform: scale(0.98); }
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+	.swe-modal {
+		width: calc(100% - 24px);
+		bottom: 90px;
+		max-height: 70vh;
+	}
+	.swe-subjects-list { max-height: calc(70vh - 120px); }
+}
